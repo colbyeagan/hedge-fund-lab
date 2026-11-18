@@ -1,5 +1,6 @@
 import math
 import warnings
+from pathlib import Path
 from datetime import date
 import numpy as np
 import pandas as pd
@@ -8,7 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 warnings.filterwarnings("ignore")
-st.set_page_config(page_title="The Hedge Fund Lab", layout="wide")
+st.set_page_config(page_title="Discovery Capital Management Portfolio Competition", layout="wide")
 
 # ----------------------------- Theme -----------------------------------------
 st.markdown("""
@@ -155,13 +156,26 @@ def fmt_num(x):
     return "—" if pd.isna(x) else f"{x:.2f}"
 
 # ----------------------------- Header ----------------------------------------
-st.markdown("""
-<div class="hero">
-  <div class="muted">INSTITUTIONAL PORTFOLIO SIMULATION • STUDENT EDITION</div>
-  <h1 style="margin:4px 0 2px 0;">THE HEDGE FUND LAB</h1>
-  <div class="muted">Build portfolios. Quantify risk. Survive different markets. Defend your decisions.</div>
-</div>
-""", unsafe_allow_html=True)
+# Add the supplied brand mark beside the competition title. Keep the image file
+# in the same directory as app.py so Streamlit Cloud can load it after deployment.
+logo_path = Path(__file__).parent / "discovery_capital_management_logo.png"
+with st.container():
+    logo_col, title_col = st.columns([1, 5], vertical_alignment="center")
+    with logo_col:
+        if logo_path.exists():
+            st.image(str(logo_path), use_container_width=True)
+        else:
+            st.markdown('<div style="height:8px"></div>', unsafe_allow_html=True)
+    with title_col:
+        st.markdown("""
+        <div class="hero">
+          <div class="muted" style="letter-spacing:.12em; text-transform:uppercase; font-size:.76rem;">
+            Discovery Capital Management
+          </div>
+          <h1 style="margin:5px 0 3px 0; font-size:2rem;">Portfolio Competition</h1>
+          <div class="muted">Portfolio construction and risk management exercise</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 with st.sidebar:
     st.markdown("## Lab controls")
