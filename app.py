@@ -8,19 +8,54 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 warnings.filterwarnings("ignore")
-st.set_page_config(page_title="The Hedge Fund Lab", page_icon="📈", layout="wide")
+st.set_page_config(page_title="The Hedge Fund Lab", layout="wide")
 
 # ----------------------------- Theme -----------------------------------------
 st.markdown("""
 <style>
-  .stApp {background: #0b1220; color: #e8edf5;}
-  [data-testid="stSidebar"] {background: #101a2b;}
-  [data-testid="stMetric"] {background: #121f33; border: 1px solid #26364d; padding: 14px; border-radius: 12px;}
-  .hero {padding: 22px 26px; border: 1px solid #26364d; border-radius: 16px;
-         background: linear-gradient(120deg,#14243b,#101827); margin-bottom: 18px;}
-  .muted {color:#9aabc1;}
-  div[data-testid="stTabs"] button {font-weight:600;}
-  .small-note {font-size: .85rem; color:#9aabc1;}
+  :root {
+    --page: #0b1220;
+    --panel: #121e30;
+    --panel-2: #17263a;
+    --border: #34465d;
+    --text: #edf2f8;
+    --muted: #b7c4d4;
+    --accent: #8fb5d8;
+  }
+  .stApp { background: var(--page); color: var(--text); }
+  [data-testid="stSidebar"] { background: #101a29; border-right: 1px solid var(--border); }
+  /* Make metric labels and values readable against the dark cards. */
+  [data-testid="stMetric"] {
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 14px 16px; border-radius: 5px;
+  }
+  [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] p,
+  [data-testid="stMetricLabel"] div { color: #c6d2e0 !important; opacity: 1 !important; }
+  [data-testid="stMetricValue"], [data-testid="stMetricValue"] div {
+    color: #f4f7fb !important; opacity: 1 !important;
+  }
+  [data-testid="stMetricDelta"] { color: #c6d2e0 !important; }
+  .hero {
+    padding: 20px 24px; border: 1px solid var(--border); border-radius: 5px;
+    background: #132238; margin-bottom: 18px;
+  }
+  .muted, .small-note { color: var(--muted) !important; }
+  .small-note { font-size: .85rem; }
+  /* Streamlit form controls: brighter labels, restrained corners. */
+  label, [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] p,
+  [data-testid="stCaptionContainer"] { color: #c6d2e0 !important; }
+  input, textarea, [data-baseweb="select"] > div {
+    color: #f1f5f9 !important; background-color: #142237 !important;
+    border-color: #52657c !important; border-radius: 4px !important;
+  }
+  [data-baseweb="popover"] { border-radius: 4px !important; }
+  button, [data-testid="stDownloadButton"] button {
+    border-radius: 4px !important; font-weight: 600;
+  }
+  [data-testid="stTabs"] button { font-weight: 600; color: #c6d2e0; }
+  [data-testid="stDataFrame"] { border: 1px solid var(--border); }
+  [data-testid="stExpander"] { border: 1px solid var(--border); border-radius: 4px; }
+  hr { border-color: #34465d; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -129,7 +164,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.markdown("## 🧭 Lab controls")
+    st.markdown("## Lab controls")
     st.caption("Configure the investment mandate")
     start = st.date_input("Historical start date", value=date(2016,1,1))
     end = st.date_input("Historical end date", value=date.today())
@@ -139,7 +174,7 @@ with st.sidebar:
                           value=0.0, step=0.0025, format="%.3f")
     benchmark = st.selectbox("Benchmark", ["SPY","QQQ","IWM","EFA"], index=0)
     st.divider()
-    st.markdown("### 🎯 Portfolio mandate")
+    st.markdown("### Portfolio mandate")
     capital = st.number_input("Starting notional ($)", min_value=10000, max_value=100000000,
                               value=1000000, step=50000)
     max_weight = st.slider("Maximum absolute position weight", 5, 100, 40, 5)
@@ -224,8 +259,8 @@ with right:
     st.plotly_chart(fig,use_container_width=True)
 
 # ----------------------------- Tabs ------------------------------------------
-tabs = st.tabs(["📊 Risk dashboard","🔗 Correlation lab","🌪️ Regime stress test",
-                "⚙️ Optimizer","🏆 PM challenge","📚 Analyst handbook"])
+tabs = st.tabs(["Risk dashboard", "Correlation lab", "Regime stress test",
+                "Optimizer", "PM challenge", "Analyst handbook"])
 
 with tabs[0]:
     st.subheader("Risk & performance attribution")
@@ -389,7 +424,7 @@ with tabs[4]:
          f"Largest absolute weight {concentration:.1%}; 30% guideline")
     ]
     for label,ok,detail in checks:
-        st.write(("✅" if ok else "⚠️")+f" **{label}:** {detail}")
+        st.write(("PASS  " if ok else "REVIEW  ")+f"**{label}:** {detail}")
     st.markdown("#### Investment committee memo")
     thesis=st.text_area("State your investment thesis, key risk, catalyst, and what would make you change your mind.",
                         placeholder="Our portfolio is positioned for... The key risk is... We would reduce exposure if...")
